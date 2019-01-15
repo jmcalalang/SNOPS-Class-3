@@ -13,34 +13,30 @@ Overview
 
 In this lab, the iControl REST based API will be used to explore some of the ASM related endpoints.
 
-.. NOTE::
-    - Use Postman collection to complete this lab.
-    - Some response content has been removed for brevity.
-
 |labmodule|\.\ |labnum|\.1.0. Retrieve ASM Resources
 ----------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
 **Example Response**
@@ -67,27 +63,31 @@ In this lab, the iControl REST based API will be used to explore some of the ASM
 |labmodule|\.\ |labnum|\.1.1. Retrieve ASM Server Technologies
 ---------------------------------------------------------------
 
-.. Hint::  
+It is not always easy to determine which server technologies apply to the applications for which you are creating security policies. Server technologies can be server-side applications, frameworks, programs, web servers, operating systems, and so on, and they are associated with one or more sets of attack signatures that can be added to the policy. This allows you to assign a more selective set of attack signatures to the policy, that is, signatures that specifically apply to the technologies used in the application being protected.
+
+https://support.f5.com/kb/en-us/products/big-ip_asm/manuals/product/asm-implementations-13-1-0/23.html#guid-ffaec034-3c60-452f-ab27-01c31db8fe4f
+
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/server-technologies
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
 **Example Response**
@@ -127,36 +127,41 @@ In this lab, the iControl REST based API will be used to explore some of the ASM
 |labmodule|\.\ |labnum|\.1.2. Retrieve ASM Policies
 ----------------------------------------------------
 
-.. Hint::  
+You can use the iControl REST API to display security policy configuration elements such as URLs, parameters, file types, and content profiles for a particular security policy. For more information about the iControl REST API, refer to the iControl REST user guide that applies to your BIG-IP version, available on DevCentral.
+
+https://support.f5.com/csp/article/K18432457
+
+
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
 
   2) Copy the ASM policy hash as it appears in the ``"link": "https://localhost/mgmt/tm/asm/policies/``\ **W-w3q351kYbr1A9OEaUOag**\ ``/plain-text-profiles?ver=13.1.0",`` line of the response and populate the **{{asm_policy_hash}}** Postman environment variable.
-	
+
 
 **Example Response**
 
-.. NOTE:: A test policy named ``test_asm_policy`` has already been created on the BIG-IP for demonstration purposes.
+.. NOTE:: ``owasptop10-v01`` was created in Module 1, if you named it differently search for that name
 
 ::
 
@@ -179,27 +184,27 @@ In this lab, the iControl REST based API will be used to explore some of the ASM
 |labmodule|\.\ |labnum|\.1.3. Retrieve an ASM Policy
 -----------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies/{{asm_policy_hash}}
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
 
@@ -219,13 +224,13 @@ In this lab, the iControl REST based API will be used to explore some of the ASM
         "cookieSettingsReference": {
             "link": "https://localhost/mgmt/tm/asm/policies/W-w3q351kYbr1A9OEaUOag/cookie-settings?ver=13.1.0"
         },
-        "versionLastChange": " Security Policy /Common/test_asm_policy [add]: Type was set to Security.\nEncoding Selected was set to false.\nApplication Language was set to utf-8.\nCase Sensitivity was set to Case Sensitive.\nTemplate was set to POLICY_TEMPLATE_FUNDAMENTAL.\nActive was set to false.\nDifferentiate between HTTP and HTTPS URLs was set to Protocol Specific.\nPolicy Name was set to /Common/test_asm_policy.\nEnforcement Mode was set to Blocking. { audit: policy = /Common/test_asm_policy, username = admin, client IP = 192.168.2.111 }",
-        "name": "test_asm_policy",
+        "versionLastChange": " Security Policy /Common/owasptop10-v01 [add]: Type was set to Security.\nEncoding Selected was set to false.\nApplication Language was set to utf-8.\nCase Sensitivity was set to Case Sensitive.\nTemplate was set to POLICY_TEMPLATE_FUNDAMENTAL.\nActive was set to false.\nDifferentiate between HTTP and HTTPS URLs was set to Protocol Specific.\nPolicy Name was set to /Common/owasptop10-v01.\nEnforcement Mode was set to Blocking. { audit: policy = /Common/owasptop10-v01, username = admin, client IP = 192.168.2.111 }",
+        "name": "owasptop10-v01",
         "caseInsensitive": false,
         "headerSettingsReference": {
             "link": "https://localhost/mgmt/tm/asm/policies/W-w3q351kYbr1A9OEaUOag/header-settings?ver=13.1.0"
         },
-        "versionPolicyName": "/Common/test_asm_policy",
+        "versionPolicyName": "/Common/owasptop10-v01",
         "generalReference": {
             "link": "https://localhost/mgmt/tm/asm/policies/W-w3q351kYbr1A9OEaUOag/general?ver=13.1.0"
         }
@@ -234,32 +239,32 @@ In this lab, the iControl REST based API will be used to explore some of the ASM
 |labmodule|\.\ |labnum|\.1.4. Search for an ASM Policy
 --------------------------------------------------------
 
-An HTTP GET to the ``/mgmt/tm/asm/policies`` endpoint with a parameter of ``filter=name eq test``, allows ASM policies to be searched by name.
+An HTTP GET to the ``/mgmt/tm/asm/policies`` endpoint with a parameter of ``filter=name eq owasp``, allows ASM policies to be searched by name.
 
-.. Hint::  
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
-         https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies?filter=name eq test
-     
+
+         https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies?filter=name eq owasp
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
-     
+
 **Example Response**
 
 ::
@@ -276,13 +281,13 @@ An HTTP GET to the ``/mgmt/tm/asm/policies`` endpoint with a parameter of ``filt
         "cookieSettingsReference": {
             "link": "https://localhost/mgmt/tm/asm/policies/W-w3q351kYbr1A9OEaUOag/cookie-settings?ver=13.1.0"
         },
-        "versionLastChange": " Security Policy /Common/test_asm_policy [add]: Type was set to Security.\nEncoding Selected was set to false.\nApplication Language was set to utf-8.\nCase Sensitivity was set to Case Sensitive.\nTemplate was set to POLICY_TEMPLATE_FUNDAMENTAL.\nActive was set to false.\nDifferentiate between HTTP and HTTPS URLs was set to Protocol Specific.\nPolicy Name was set to /Common/test_asm_policy.\nEnforcement Mode was set to Blocking. { audit: policy = /Common/test_asm_policy, username = admin, client IP = 192.168.2.111 }",
-        "name": "test_asm_policy",
+        "versionLastChange": " Security Policy /Common/owasptop10-v01 [add]: Type was set to Security.\nEncoding Selected was set to false.\nApplication Language was set to utf-8.\nCase Sensitivity was set to Case Sensitive.\nTemplate was set to POLICY_TEMPLATE_FUNDAMENTAL.\nActive was set to false.\nDifferentiate between HTTP and HTTPS URLs was set to Protocol Specific.\nPolicy Name was set to /Common/owasptop10-v01.\nEnforcement Mode was set to Blocking. { audit: policy = /Common/owasptop10-v01, username = admin, client IP = 192.168.2.111 }",
+        "name": "owasptop10-v01",
         "caseInsensitive": false,
         "headerSettingsReference": {
             "link": "https://localhost/mgmt/tm/asm/policies/W-w3q351kYbr1A9OEaUOag/header-settings?ver=13.1.0"
         },
-        "versionPolicyName": "/Common/test_asm_policy",
+        "versionPolicyName": "/Common/owasptop10-v01",
         "generalReference": {
             "link": "https://localhost/mgmt/tm/asm/policies/W-w3q351kYbr1A9OEaUOag/general?ver=13.1.0"
         }
@@ -293,30 +298,30 @@ An HTTP GET to the ``/mgmt/tm/asm/policies`` endpoint with a parameter of ``filt
 
 An HTTP GET to the ``/mgmt/tm/asm/tasks/`` endpoint lists the various ASM related tasks that can be performed via the iControl REST API.
 
-.. Hint::  
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/tasks/
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
-     
+
 **Example Response**
 
 ::
@@ -416,30 +421,30 @@ An HTTP GET to the ``/mgmt/tm/asm/tasks/`` endpoint lists the various ASM relate
 |labmodule|\.\ |labnum|\.1.6. List a specific ASM Task
 -------------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/tasks/export-policy
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
-     
+
 **Example Response**
 
 ::
@@ -454,30 +459,37 @@ An HTTP GET to the ``/mgmt/tm/asm/tasks/`` endpoint lists the various ASM relate
 |labmodule|\.\ |labnum|\.1.7. Retrieve ASM Policy Templates
 ------------------------------------------------------------
 
-.. Hint::  
+
+Generic ready template folder contain files which are ASM default builtin generic policy templates for version 13 These templates are the same as the built-in tampltes the included with the version and ready to download.
+
+Application ready template folader contain application policy templates which is a patched version of the built-in policies for version 13
+
+https://github.com/f5devcentral/f5-asm-policy-template-v13
+
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policy-templates
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
-     
+
 **Example Response**
 
 ::
@@ -540,30 +552,36 @@ An HTTP GET to the ``/mgmt/tm/asm/tasks/`` endpoint lists the various ASM relate
 |labmodule|\.\ |labnum|\.1.8. Retrieve ASM Signature Sets
 ------------------------------------------------------------
 
-.. Hint::  
+Attack signatures are rules or patterns that identify attack sequences or classes of attacks on a web application and its components. You can apply attack signatures to both requests and responses.
+
+F5 releases a new attack signature update for the BIG-IP ASM system on a regular basis. The attack signature update includes new attack signatures as well as enhancements to existing attack signatures.
+
+https://support.f5.com/csp/article/K8217
+
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/signature-sets
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
-     
+
 **Example Response**
 
 ::
@@ -627,30 +645,30 @@ An HTTP GET to the ``/mgmt/tm/asm/tasks/`` endpoint lists the various ASM relate
 |labmodule|\.\ |labnum|\.1.9. Retrieve ASM Signature Systems
 --------------------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/signature-systems
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
-     
+
 **Example Response**
 
 ::
@@ -678,30 +696,30 @@ An HTTP GET to the ``/mgmt/tm/asm/tasks/`` endpoint lists the various ASM relate
 |labmodule|\.\ |labnum|\.1.10. Retrieve ASM Attack Types
 -----------------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/attack-types
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
-     
+
 **Example Response**
 
 ::
@@ -731,30 +749,30 @@ An HTTP GET to the ``/mgmt/tm/asm/tasks/`` endpoint lists the various ASM relate
 |labmodule|\.\ |labnum|\.1.11. Retrieve ASM Policy URLs
 --------------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies/{{asm_policy_hash}}/urls
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
-     
+
 **Example Response**
 
 ::
@@ -888,30 +906,30 @@ An HTTP GET to the ``/mgmt/tm/asm/tasks/`` endpoint lists the various ASM relate
 |labmodule|\.\ |labnum|\.1.12. Retrieve ASM Policy Signature Sets
 ---------------------------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Reuse the Postman step for 2.2.1 to send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies/{{asm_policy_hash}}/signature-sets
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
      |
-     
+
 **Example Response**
 
 ::

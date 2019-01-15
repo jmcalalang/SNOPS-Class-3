@@ -13,34 +13,31 @@ Overview
 
 In this lab, the iControl REST based API will be used to create both an ASM parent and child policy.
 
-.. NOTE::
-    - Use Postman collection to complete this lab.
-    - Some response content has been removed for brevity.
 
 |labmodule|\.\ |labnum|\.1.0. Retrieve ASM Policies
 -----------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
 **Example Response**
@@ -66,27 +63,31 @@ In this lab, the iControl REST based API will be used to create both an ASM pare
 |labmodule|\.\ |labnum|\.1.1. Retrieve LTM ASM Profile Web Security
 ---------------------------------------------------------------------
 
-.. Hint::  
+If you need to use ASM, you need to add the profile to the virtual server.
+
+https://devcentral.f5.com/questions/virtual-server-requires-a-profile-type-web-security-53043
+
+.. Hint::
   1) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/ltm/profile/web-security
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
 **Example Response**
@@ -112,30 +113,34 @@ In this lab, the iControl REST based API will be used to create both an ASM pare
 |labmodule|\.\ |labnum|\.2.0. Create an ASM Parent Policy
 ------------------------------------------------------------
 
+You can use Application Security Manager™ (ASM) to create two layers of security policies: parent policies and child policies. Parent policies include mandatory policy elements, and child policies inherit those attributes from the parent. When the parent policy is updated, its child policies are automatically updated.
+
+https://support.f5.com/kb/en-us/products/big-ip_asm/manuals/product/asm-getting-started-13-1-0/3.html
+
 An HTTP POST to the ``/mgmt/tm/asm/policies`` endpoint with a body containing basic policy configuration including ``"type":"parent"`` will create a new ASM parent policy which can then be used for inheritance when a child policy is created.
 
-.. Hint::  
+.. Hint::
   1) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          POST
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies
-     
+
      | **Headers**
-     
+
      ::
-     
+
           Content-Type: application/json
 	  X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
      ::
@@ -150,7 +155,7 @@ An HTTP POST to the ``/mgmt/tm/asm/policies`` endpoint with a body containing ba
             "learningMode":"disabled",
             "serverTechnologyName": "Unix/Linux"
         }
-        
+
   2) Copy the ASM policy hash for the newly created policy and populate the **{{asm_policy_hash}}** Postman environment variable.  The hash in the example below is **JEQPVWeJcdso_rEC7Xxo6Q**
 
 **Example Response**
@@ -208,27 +213,27 @@ An HTTP POST to the ``/mgmt/tm/asm/policies`` endpoint with a body containing ba
 |labmodule|\.\ |labnum|\.2.1. Retrieve an ASM Parent Policy
 ------------------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies/{{asm_policy_hash}}
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
 **Example Response**
@@ -259,28 +264,28 @@ An HTTP POST to the ``/mgmt/tm/asm/policies`` endpoint with a body containing ba
 
 An HTTP POST to the ``/mgmt/tm/asm/policies`` endpoint with a body containing basic policy configuration including ``"parentPolicyName": "/Common/API_ASM_POLICY_TEST"`` will create a new child policy which inherits a base configuration from the specified parent.
 
-.. Hint::  
+.. Hint::
   1) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          POST
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies
-     
+
      | **Headers**
-     
+
      ::
-     
+
           Content-Type: application/json
 	  X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
      ::
@@ -295,7 +300,7 @@ An HTTP POST to the ``/mgmt/tm/asm/policies`` endpoint with a body containing ba
             "learningMode":"slow",
             "serverTechnologyName": "Apache Tomcat"
         }
-        
+
   2) Copy the ASM policy hash for the newly created policy and populate the **{{asm_policy_hash}}** Postman environment variable.  The hash in the example below is **zD8sehzULw6Ni7GJG2XwJQ**
 
 **Example Response**
@@ -342,27 +347,27 @@ An HTTP POST to the ``/mgmt/tm/asm/policies`` endpoint with a body containing ba
 |labmodule|\.\ |labnum|\.3.1. Retrieve ASM child policy
 -----------------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies/{{asm_policy_hash}}
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
 **Example Response**
@@ -420,4 +425,3 @@ An HTTP POST to the ``/mgmt/tm/asm/policies`` endpoint with a body containing ba
             "link": "https://localhost/mgmt/tm/asm/policies/zD8sehzULw6Ni7GJG2XwJQ/policy-builder-cookie?ver=13.1.0"
         }
     }
-

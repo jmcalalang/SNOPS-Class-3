@@ -13,38 +13,34 @@ Overview
 
 In this lab, the previously created **ASM Child policy** will be applied to a virtual server using the iControl REST API.
 
-.. NOTE::
-    - Use Postman collection to complete this lab.
-    - Some response content has been removed for brevity.
-
 |labmodule|\.\ |labnum|\.1. Apply ASM Policy to VS
 ---------------------------------------------------
 
 An HTTP PATCH to the ``/mgmt/tm/asm/policies/{{asm_policy_hash}}`` endpoint with a body containing the name of a virtual server(s), in this case ``"virtualServers":["/Common/hackazon_vs"]``, will apply the ASM policy.
 
-.. Hint::  
+.. Hint::
   1) Ensure the policy hash for the previously created **Child Policy** has been copied to the Postman environmental variable {{asm_policy_hash}}.
   2) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          PATCH
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies/{{asm_policy_hash}}
-     
+
      | **Headers**
-     
+
      ::
-     
+
           Content-Type: application/json
 	  X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
      ::
@@ -98,27 +94,27 @@ An HTTP PATCH to the ``/mgmt/tm/asm/policies/{{asm_policy_hash}}`` endpoint with
 |labmodule|\.\ |labnum|\.2. Retrieve ASM policy
 ------------------------------------------------
 
-.. Hint::  
+.. Hint::
   1) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          GET
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies/{{asm_policy_hash}}
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
 **Example Response**
@@ -150,28 +146,28 @@ An HTTP PATCH to the ``/mgmt/tm/asm/policies/{{asm_policy_hash}}`` endpoint with
 
 An HTTP PATCH to the ``/mgmt/tm/asm/policies/{{asm_policy_hash}}`` endpoint with a body removing the name of a virtual server(s), in this case ``"virtualServers":[""]``, will remove the ASM policy from the absent virtual serves.
 
-.. Hint::  
+.. Hint::
   1) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          PATCH
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies/{{asm_policy_hash}}
-     
+
      | **Headers**
-     
+
      ::
-     
+
           Content-Type: application/json
 	  X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
      ::
@@ -227,27 +223,27 @@ An HTTP PATCH to the ``/mgmt/tm/asm/policies/{{asm_policy_hash}}`` endpoint with
 
 An HTTP DELETE to the ``/mgmt/tm/asm/policies/{{asm_policy_hash}}`` endpoint will delete the ASM policy from the BIG-IP.
 
-.. Hint::  
+.. Hint::
   1) Send a **Request** with the following details.
-     
+
      | **Method**
-     
+
      ::
-     
+
          DELETE
 
      | **URL**
-     
+
      ::
-     
+
          https://{{big-ip-a-mgmt}}/mgmt/tm/{{module}}/policies/{{asm_policy_hash}}
-     
+
      | **Headers**
-     
+
      ::
-     
+
 	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
+
      | **Body**
 
 **Example Response**

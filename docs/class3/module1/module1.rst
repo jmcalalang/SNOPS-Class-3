@@ -1,4 +1,4 @@
-Module 3: Continuous Integration / Continuous Delivery for SecdevOps
+Module 1: Continuous Integration / Continuous Delivery for SecdevOps
 =====================================================================
 
 In this module we will practice some of the below concepts:

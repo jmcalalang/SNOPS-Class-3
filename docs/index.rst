@@ -1,5 +1,5 @@
-F5 Programmability Training - Index
-===================================
+Portland User Group - Super-NetOps Class 3 - Index
+==================================================
 
 .. toctree::
     :maxdepth: 2
@@ -8,5 +8,3 @@ F5 Programmability Training - Index
 
     intro
     class*/class*
-    miniclass/miniclass.rst
-    howtos/howtos.rst

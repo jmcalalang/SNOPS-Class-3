@@ -1,7 +1,7 @@
-Module 1: Programmatic Firewall (AFM) Configuration
+Module 3: Programmatic Firewall (AFM) Configuration
 ===================================================
 
-* Provision AFM module on BIG-IP 
+* Provision AFM module on BIG-IP
 * Interact with AFM related REST endpoints on a BIG-IP
 * Create and modify an AFM address list
 * Create and modify an AFM policy
