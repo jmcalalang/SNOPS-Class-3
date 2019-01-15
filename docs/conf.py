@@ -31,11 +31,11 @@ on_snops = os.environ.get('SNOPS_ISALIVE', None) == 'True'
 print "on_rtd = %s" % on_rtd
 print "on_snops = %s" % on_snops
 
-github_url = "https://github.com/f5devcentral/f5-automation-labs"
+github_url = "https://github.com/jmcalalang/f5-automation-labs"
 
 branch_map = {
-    "stable":"master",
-    "latest":"master"
+    "stable":"develop",
+    "latest":"develop"
 }
 
 try:
@@ -589,6 +589,3 @@ epub_exclude_files = ['search.html']
 # If false, no index is generated.
 #
 # epub_use_index = True
-
-
-
