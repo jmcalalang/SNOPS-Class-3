@@ -1,314 +1,75 @@
-.. |labmodule| replace:: 1
+.. |labmodule| replace:: 3
 .. |labnum| replace:: 2
 .. |labdot| replace:: |labmodule|\ .\ |labnum|
 .. |labund| replace:: |labmodule|\ _\ |labnum|
 .. |labname| replace:: Lab\ |labdot|
 .. |labnameund| replace:: Lab\ |labund|
 
-Module |labmodule|\, Lab \ |labnum|\: Create an AFM Address List
-=================================================================
+Module |labmodule|\, Lab \ |labnum|\: Tune/fix security policy (Sec0ps)
+=========================================================================
 
-Overview
---------
+Background:
+~~~~~~~~~~~
 
-In this lab, the iControl REST based API will be used to create an address list that will be used with an AFM policy in a later lab.
+Our application tests came back and some have failed, the results came back with the WAF blocking page.
 
+Task |labmodule|\.\ |labnum|\.2.1 - Lets find which requests were blocked and resolve false-positive
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. NOTE:: 
-    - Use Postman to complete this lab.
-    - Some response content has been removed for brevity.
+|labmodule|\.\ |labnum|\.2.1.1 Clear the false positive:
+**********************************************************
+- Open Chrome and login to ``BIG-IP A``
+- Go to "Security > Application Security > Policy Building > Traffic Learning"
+- Make sure you are editing the "owasptop10" policy
+- Click on the Traffic Learning Recommendation **HTTP protocol compliance failed**
 
-|labmodule|\.\ |labnum|\.1. List all Firewall Policies
---------------------------------------------------------
+Examine the request, this is a false positive. The app uses a different language in the header and it is legitimate traffic,
+you can also see that the request comes from a trusted IP
 
-.. Hint::  
-  1) Send a **Request** with the following details.
-     
-     | **Method**
-     
-     ::
-     
-         GET
-     
-     | **URL**
-     
-     ::
-     
-         https://{{big-ip-a-mgmt}}/mgmt/tm/security/firewall/policy
-     
-     | **Headers**
-     
-     ::
-     
-	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
-     | **Body**
+- Accept the suggestion (If you can not accept the suggestion make sure you are in the "Common" partition)
 
-**Example Response**
+  |Bigip-030|
 
-.. NOTE:: 
-    - A test policy has already been created on the BIG-IP for demonstration purposes.
+|labmodule|\.\ |labnum|\.2.1.2 Apply the policy :
+****************************************************
 
-::
+- Apply the policy
 
-    {
-        "kind": "tm:security:firewall:policy:policycollectionstate",
-        "selfLink": "https://localhost/mgmt/tm/security/firewall/policy?ver=13.1.0.8",
-        "items": [
-            {
-                "kind": "tm:security:firewall:policy:policystate",
-                "name": "block_all",
-                "partition": "Common",
-                "fullPath": "/Common/block_all",
-                "generation": 5789,
-                "selfLink": "https://localhost/mgmt/tm/security/firewall/policy/~Common~block_all?ver=13.1.0.8",
-                "rulesReference": {
-                    "link": "https://localhost/mgmt/tm/security/firewall/policy/~Common~block_all/rules?ver=13.1.0.8",
-                    "isSubcollection": true
-                }
-            }
-        ]
-    }
-
-|labmodule|\.\ |labnum|\.2. List all Address Lists
------------------------------------------------------------
-
-.. Hint::  
-  1) Send a **Request** with the following details.
-     
-     | **Method**
-     
-     ::
-     
-         GET
-     
-     | **URL**
-     
-     ::
-     
-         https://{{big-ip-a-mgmt}}/mgmt/tm/security/firewall/address-list
-     
-     | **Headers**
-     
-     ::
-     
-	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
-     | **Body**
-
-**Example Response**
-
-.. NOTE:: 
-    - A test address list has already been created on the BIG-IP for demonstration purposes.
-
-::
-
-    {
-        "kind": "tm:security:firewall:address-list:address-listcollectionstate",
-        "selfLink": "https://localhost/mgmt/tm/security/firewall/address-list?ver=13.1.0.8",
-        "items": [
-            {
-                "kind": "tm:security:firewall:address-list:address-liststate",
-                "name": "test_address_list",
-                "partition": "Common",
-                "fullPath": "/Common/test_address_list",
-                "generation": 6326,
-                "selfLink": "https://localhost/mgmt/tm/security/firewall/address-list/~Common~test_address_list?ver=13.1.0.8",
-                "addresses": [
-                    {
-                        "name": "1.1.1.1"
-                    }
-                ]
-            }
-        ]
-    }
-
-|labmodule|\.\ |labnum|\.3. Create an Address List
---------------------------------------------------
-
-An HTTP POST to the ``/mgmt/tm/security/firewall/address-list/`` endpoint with a body containing the configuration creates an address list that can be used with a firewall policy.
-
-.. Hint::  
-  1) Send a **Request** with the following details.
-     
-     | **Method**
-     
-     ::
-     
-         POST
-     
-     | **URL**
-     
-     ::
-     
-         https://{{big-ip-a-mgmt}}/mgmt/tm/security/firewall/address-list/
-     
-     | **Headers**
-     
-     ::
-     
-          Content-Type: application/json
-	  X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
-     | **Body**
-	 
-     ::
-     
-         {
-            "name": "google-dns_address_list",
-        "addresses": [
-            {
-                "name": "8.8.4.4"
-            }  ]
-         }
-  2) Copy the **name** of the address list you created into the **afm_address_list** Postman environment variable.
-
-**Example Response**
-
-.. code-block:: rest
-    :emphasize-lines: 3, 10
-
-    {
-        "kind": "tm:security:firewall:address-list:address-liststate",
-        "name": "google-dns_address_list",
-        "partition": "Common",
-        "fullPath": "/Common/google-dns_address_list",
-        "generation": 11436,
-        "selfLink": "https://localhost/mgmt/tm/security/firewall/address-list/~Common~google-dns_address_list?ver=13.1.0.8",
-        "addresses": [
-            {
-                "name": "8.8.4.4"
-            }
-        ]
-    }
-
-|labmodule|\.\ |labnum|\.4. List a Single Address List
----------------------------------------------------------------
-To retrieve the contents of a single address list, send a HTTP GET to the ``/mgmt/tm/security/firewall/address-list/`` and include the name of the address list.  For example, ``/mgmt/tm/security/firewall/address-list/google-dns_address_list``.
-
-.. Hint::  
-  1) Send a **Request** with the following details.
-     
-     | **Method**
-     
-     ::
-     
-         GET
-     
-     | **URL**
-     
-     ::
-     
-         https://{{big-ip-a-mgmt}}/mgmt/tm/security/firewall/address-list/{{afm_address_list}}
-     
-     | **Headers**
-     
-     ::
-     
-    	 X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
-     | **Body**
-
-**Example Response**
-
-::
-
-    {
-        "kind": "tm:security:firewall:address-list:address-liststate",
-        "name": "google-dns_address_list",
-        "partition": "Common",
-        "fullPath": "/Common/google-dns_address_list",
-        "generation": 11436,
-        "selfLink": "https://localhost/mgmt/tm/security/firewall/address-list/~Common~google-dns_address_list?ver=13.1.0.8",
-        "addresses": [
-            {
-                "name": "8.8.4.4"
-            }
-        ]
-    }
-
-|labmodule|\.\ |labnum|\.5. Update Address List
---------------------------------------------------------
-
-A HTTP PATCH to the ``/mgmt/tm/security/firewall/address-list/{{afm_address_list}}`` endpoint with a body containing all addresses that should exist in the address list will update this collection.
-
-.. WARNING:: When patching an address list, be sure to include all addresses (e.g. existing and new) to ensure that the list does not get overwritten.
-
-.. Hint::  
-  1) Send a **Request** with the following details.
-     
-     | **Method**
-     
-     ::
-     
-         PATCH
-     
-     | **URL**
-     
-     ::
-     
-         https://{{big-ip-a-mgmt}}/mgmt/tm/security/firewall/address-list/{{afm_address_list}}
-     
-     | **Headers**
-     
-     ::
-     
-          Content-Type: application/json
-	  X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
-     | **Body**
-	 
-     ::
-     
-		{
-            "name": "google-dns_address_list",
-        "addresses": [
-		    {
-				"name": "1.1.1.1"
-			},
-			{
-				"name": "2.2.2.2"
-			},
-			{
-				"name": "3.3.3.3"
-			},
-			{
-				"name": "4.4.4.4"
-			},
-			{
-				"name": "8.8.4.4"
-			}
-            ]
-         }
+.. Note:: You are applying the policy to dev, SecOps shouldn't change the policy
+   running in production outside of the CI/CD process **unless** there is a
+   true emergency
 
 
-**Example Response**
+Task |labmodule|\.\ |labnum|\.2.2 - Save the WAF policy to the templates Source Control (managed by SecOps)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: rest
-    :emphasize-lines: 3, 10, 13, 16, 19, 22
+SecOps has updated the policy with a setting that makes sense to update on the general template.
+We will now export the policy from the BIGIP A to the waf-policies repo (managed by SecOps)
 
-    {
-        "kind": "tm:security:firewall:address-list:address-liststate",
-        "name": "google-dns_address_list",
-        "partition": "Common",
-        "fullPath": "/Common/google-dns_address_list",
-        "generation": 11436,
-        "selfLink": "https://localhost/mgmt/tm/security/firewall/address-list/~Common~google-dns_address_list?ver=13.1.0.8",
-        "addresses": [
-            {
-                "name": "1.1.1.1"
-            },            
-            {
-                "name": "2.2.2.2"
-            },            
-            {
-                "name": "3.3.3.3"
-            },            
-            {
-                "name": "4.4.4.4"
-            },
-            {
-                "name": "8.8.4.4"
-            }
-        ]
-    }
+|labmodule|\.\ |labnum|\.2.2.1 Pull WAF policy from the BIG-IP A :
+********************************************************************
+
+- Go back to jenkins, under the "f5-rs-app3-dev" there is a job that will export the policy and save it to the git repo - :guilabel:`SEC export waf policy`
+
+	|jenkins075|
+
+- Click on this job and choose :guilabel:`Build with Parameters` from the left menu
+
+	|jenkins080|
+
+- You can leave the defaults, it asks for two parameters. the first parameter is the name of the policy on the BIG-IP A and the other is the new policy to be created in the git repo
+
+.. Note:: Why are we saving the template with a different version?
+   All changes should be tracked, more than that we should allow app teams to 'control their own destiny',
+   allowing them to choose the right time and place to update the waf policy in their environment.
+   By versioning the policies we ensure Source Control and allow control over which template gets deployed
+
+- Click on ``Build``
+
+- The security admin role ends here, it's now up to Dave to run the pipeline again.
+
+
+.. |Bigip-030| image:: images/bigip-030.png
+.. |jenkins075| image:: images/jenkins075.png
+.. |jenkins080| image:: images/jenkins080.png
+.. |Slack-030| image:: images/slack-030.png

@@ -1,269 +1,238 @@
-.. |labmodule| replace:: 1
+.. |labmodule| replace:: 3
 .. |labnum| replace:: 1
 .. |labdot| replace:: |labmodule|\ .\ |labnum|
 .. |labund| replace:: |labmodule|\ _\ |labnum|
 .. |labname| replace:: Lab\ |labdot|
 .. |labnameund| replace:: Lab\ |labund|
 
-Module |labmodule|\, Lab \ |labnum|\: Provisioning AFM
-======================================================
+Module |labmodule|\, Lab \ |labnum|\: Deploy app to dev environment (Dave)
+===========================================================================
 
-Overview
---------
+Background:
+~~~~~~~~~~~
 
-In this lab, the iControl REST API will be used to provision a module on the BIG-IP.  More specifically, the Advanced Firewall Manager (AFM) module will be provisioned for use in **Module 1, Lab 2: Configuring AFM (Advanced Firewall Module)**.
+Security team has created some security policies templates, those were built based on the F5 templates with some modifications to the specific enterprise.
+In this lab we don't cover the 'how to' of the security templates, instead we focus on the operational side and the workflows.
 
-.. NOTE::
-    - Use Postman collection to complete this lab.
-    - Some response content has been removed for brevity.
+The Tasks are split between the two roles:
+ - SecOps
+ - Dave - A persona from the 'end to end' team; a team that's responsible for the application code and running it in production.
 
-|labmodule|\.\ |labnum|\.1. Determine the license state
-------------------------------------------------------------------
+Lab scenario:
+~~~~~~~~~~~~~
 
-Before a module on a BIG-IP can be configured, it must be licensed.  Using the newly generated Authentication Token, check the license state for all modules.  This is done using an HTTP GET to the REST endpoint for ``/mgmt/tm/sys/license``.
+**New Application** - App3 is being developed, the app is an e-commerce site.
+Our code is ready to go into 'dev' environment, for our lab there are only two environments - dev and prod (reflected by BIG-IP's).
+Dave should deploy the new code into a dev environment that is exactly the same as the production environment. After the Application
+is deployed we need to run some testing; fuctional and security.
 
-.. Hint::  
-  1) Send a **Request** with the following details.
-     
-     | **Method**
-     
-     ::
-     
-         GET
+.. Note:: Pipeline is broken to dev and prod for lab simplicity,
+   it is broken up to two for a better lab flow.
 
-     | **URL**
-     
-     ::
-     
-         https://{{big-ip-a-mgmt}}/mgmt/tm/sys/license
-     
-     | **Headers**
-     
-     ::
-     
-	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
-     | **Body**
+.. Note:: OUT OF SCOPE - A major part of the app build process is out of scope for this lab,
+   building the app code and publishing it as a container to the registry. this process is done using DOCKERHUB.
 
-.. NOTE::
-    - The **afm** module is currently provisioned for **none** while the **ltm** module is provisioned for **nominal**.
+Task |labmodule|\.\ |labnum|\.1.1 - Review Dave's repo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Example Response**
+- **Make sure you've completed the setup section from the beginning of this module.**
 
-.. code-block:: rest
-    :emphasize-lines: 7-15 
+|labmodule|\.\ |labnum|\.1.1.1 View git branches within the application repo:
+******************************************************************************
 
-	},
-	"https://localhost/mgmt/tm/sys/license/0/active-modules/
-		%22Best%20Bundle,%20VE-10G%22": {
-		"nestedStats": {
-			"entries": {
-				"featureModules": {
-					"description": "{ \"Rate Shaping\" \"ASM, VE\" 
-						\"DNS-GTM, Base, 10Gbps\" \"SSL, VE\" \"Max 
-						Compression, VE\" \"AFM, VE\" \"DNSSEC\" 
-						\"GTM Licensed Objects, Unlimited\" \"DNS 
-						Licensed Objects, Unlimited\" \"DNS Rate 
-						Fallback, 250K\" \"GTM Rate Fallback, 250K\" 
-						\"GTM Rate, 250K\" \"DNS Rate Limit, 250K QPS\" 
-						\"CGN, BIG-IP VE, AFM ONLY\" \"Routing 
-						Bundle, VE\" \"PSM, VE\" }"
-				},
-				"key": {
-					"description": "KYQKGYX-EPPNOGV"
-				}
+On the container CLI type the following command to view git branches:
 
+.. code-block:: bash
 
-|labmodule|\.\ |labnum|\.2. Retrieve all module provision states
-------------------------------------------------------------------
+   cd /home/snops/f5-rs-app3
+    git branch
 
-Before a module on a BIG-IP can be configured, it also must be and provisioned.  Check the provisioning state for all modules.  This is done using an HTTP GET to the REST endpoint for ``/mgmt/tm/sys/provision``.
+The app repository has two branches, ``dev`` and ``master``. We are now working on the ``dev`` branch.
 
-.. Hint::  
-  1) Send a **Request** with the following details.
-     
-     | **Method**
-     
-     ::
-     
-         GET
+.. Note:: The lab contains two environments, dev and prod.
+   The dev environment deploys the code on the dev branch,
+   the prod environment deploys the code on the master branch.
 
-     | **URL**
-     
-     ::
-     
-         https://{{big-ip-a-mgmt}}/mgmt/tm/sys/provision
-     
-     | **Headers**
-     
-     ::
-     
-	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
-     | **Body**
+|labmodule|\.\ |labnum|\.1.1.2 View files in the application repo:
+*******************************************************************
 
-.. NOTE::
-    - The **afm** module is currently provisioned for **none** while the **ltm** module is provisioned for **nominal**.
+On the container CLI type the following commands to view the files in the repo:
 
-**Example Response**
+.. code-block:: bash
 
-.. code-block:: rest
-    :emphasize-lines: 13, 24 
+   ls
 
-    {
-        "kind": "tm:sys:provision:provisioncollectionstate",
-        "selfLink": "https://localhost/mgmt/tm/sys/provision?ver=13.1.0.8",
-        "items": [
-            {
-                "kind": "tm:sys:provision:provisionstate",
-                "name": "afm",
-                "fullPath": "afm",
-                "generation": 5609,
-                "selfLink": "https://localhost/mgmt/tm/sys/provision/afm?ver=13.1.0.8",
-                "cpuRatio": 0,
-                "diskRatio": 0,
-                "level": "none",
-                "memoryRatio": 0
-            },
-            {
-                "kind": "tm:sys:provision:provisionstate",
-                "name": "ltm",
-                "fullPath": "ltm",
-                "generation": 1,
-                "selfLink": "https://localhost/mgmt/tm/sys/provision/ltm?ver=13.1.0.8",
-                "cpuRatio": 0,
-                "diskRatio": 0,
-                "level": "nominal",
-                "memoryRatio": 0
-            }
-        ]
-    }
+- Application code exist under the 'all-in-one-hackazon' folder.
+- Infrastructure code is maintained in the 'iac_parameters.yaml' file.
 
-|labmodule|\.\ |labnum|\.3. Retrieve single module provision state
---------------------------------------------------------------------
+|labmodule|\.\ |labnum|\.1.1.3 explore the infrastructure as code parameters file:
+***********************************************************************************
 
-To retrieve the provisioning state for a single module, send a HTTP GET to the REST endpoint for ``/mgmt/tm/sys/provision`` and include the name of the module.  For example, ``/mgmt/tm/sys/provision/afm``
+.. code-block:: bash
 
-.. Hint::  
-  1) Prior to performing the below steps, validate the **{{module}}** Postman environment variable is set to **afm**.
-  2) Send a **Request** with the following details.
-     
-     | **Method**
-     
-     ::
-     
-         GET
+   more iac_parameters.yaml
 
-     | **URL**
-     
-     ::
-     
-         https://{{big-ip-a-mgmt}}/mgmt/tm/sys/provision/{{module}}
-     
-     | **Headers**
-     
-     ::
-     
-	     X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
-     | **Body**
+The infrastructure environment is deployed using Ansible playbooks that were built by devops/netops.
+Those playbooks are being controlled by jenkins which takes the iac_parameters.yaml file and uses it as parameters for the playbooks.
+
+- This enables Dave to control the deployment of the security policies from his repo, as we will see.
 
 
-**Example Response**
+Task |labmodule|\.\ |labnum|\.1.2 - Deploy dev Environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: rest
-    :emphasize-lines: 9 
+.. Note:: Jenkins can be configured to run the dev pipeline based on code change in dave's app repo (git commits).
+   In this lab we are manually starting the Full stack pipeline in Jenkins to visualize the process.
 
-    {
-        "kind": "tm:sys:provision:provisionstate",
-        "name": "afm",
-        "fullPath": "afm",
-        "generation": 5609,
-        "selfLink": "https://localhost/mgmt/tm/sys/provision/afm?ver=13.1.0.8",
-        "cpuRatio": 0,
-        "diskRatio": 0,
-        "level": "none",
-        "memoryRatio": 0
-    }
+|labmodule|\.\ |labnum|\.1.2.1 Open Jenkins:
+********************************************
+
+- From the Window jumphost open Chrome and browse to the  ``Jenkins`` bookmark
+
+  :guilabel:`username:` ``snops`` , :guilabel:`password:` ``default``
 
 
-|labmodule|\.\ |labnum|\.4.1. Provision module
-----------------------------------------------
-
-The **afm** module is provisioned using an HTTP PATCH with a body containing a provisioning level to the REST endpoint for ``mgmt/tm/sys/provision/{{module}}``.
-
-.. WARNING:: 
-   - This step is optional and should only be performed if **afm** is **not** provisioned.
-   - Performing a provision/deprovision operation takes some time to complete.  If the original request is still being processed, the below error may be encountered.
-
-.. code-block:: rest
-
-    {
-        "code": 400,
-        "message": "01071003:3: A previous provisioning operation is in progress. Try again when the BIGIP is active.",
-        "errorStack": [],
-        "apiError": 3
-    }
-
-.. Hint::  
-  1) Send a **Request** with the following details.
-     
-     | **Method**
-     
-     ::
-     
-         PATCH
-
-     | **URL**
-     
-     ::
-     
-         https://{{big-ip-a-mgmt}}/mgmt/tm/sys/provision/{{module}}
-     
-     | **Headers**
-     
-     ::
-     
-          Content-Type: application/json
-	  X-F5-Auth-Token: {{bigip-dev_auth_token}}
-     
-     | **Body**
-	 
-     ::
-     
-         {
-             "level":"nominal"
-         }
+.. Note:: When you open jenkins you should will see some jobs that have started running automatically, jobs that contain: 'Push a WAF policy',
+          this happens because jenkins monitors the repo and start the jobs (Polling/git commits). *you can cancel the jobs or let them fail*.
 
 
-**Example Response**
-
-.. code-block:: rest
-    :emphasize-lines: 9
-
-    {
-        "kind": "tm:sys:provision:provisionstate",
-        "name": "afm",
-        "fullPath": "afm",
-        "generation": 10636,
-        "selfLink": "https://localhost/mgmt/tm/sys/provision/afm?ver=13.1.0.8",
-        "cpuRatio": 0,
-        "diskRatio": 0,
-        "level": "nominal",
-        "memoryRatio": 0
-    }
+|labmodule|\.\ |labnum|\.1.2.2 Start the "Full stack pipeline":
+*****************************************************************
+* In jenkins open the "Agility devSecOps - f5-rs-app3-dev" folder, the lab jobs are all in this folder
+  we will start by deploying a dev environment, you will start a pipeline that creates a few jobs around our application service
 
 
-|labmodule|\.\ |labnum|\.4.2. Deprovision module
---------------------------------------------------
+  |jenkins010|
 
-To deprovision a BIG-IP module, repeat step |labmodule|\.\ |labnum|\.4.1 and set the level to "none" for the selected module.
+* click on the 'f5-rs-app3-dev' folder, here you can see all of the relevant jenkins jobs for the dev environment.
+
+  |jenkins020|
+
+* click on 'Service deployment pipeline' , that's the pipeline view for this same folder.
+
+  |jenkins030|
+
+* click on 'run' to start the dev environment pipeline.
+
+  |jenkins040|
 
 
-|labmodule|\.\ |labnum|\.4.3. Re-provision module
---------------------------------------------------
 
-Repeat steps |labmodule|\.\ |labnum|\.4.1 to re-provision the **afm** module to nominal if previously deprovisioned.
+Task |labmodule|\.\ |labnum|\.1.3 - Review the deployed environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. NOTE:: 
-    - The **afm** module should be provisioned to **nominal** after performing the steps in this Lab.
+.. Note:: Jenkins doesn't automatically refresh the page, either manually refresh to see the progress, or click on the 'ENABLE AUTO REFRESH' on the upper right side.
+
+|labmodule|\.\ |labnum|\.1.3.1 Review jobs output:
+****************************************************
+
+* You can review the output of each job while its running, click on the small :guilabel:`console output` icon as shown in the screenshot:
+
+  |jenkins053|
+
+|labmodule|\.\ |labnum|\.1.3.2 Let the jobs run until the pipeline finishes:
+********************************************************************************
+
+* Wait until all of the jobs have finished (turned green and the app-test one is red ).
+
+  |jenkins055|
+
+
+|labmodule|\.\ |labnum|\.1.3.3 Login to the BIG-IP:
+*****************************************************
+
+- From the Windows Jumphost open the bookmark in Chrome for `BIG-IP A GUI`
+- username: :guilabel:`admin`
+- password: :guilabel:`admin`
+
+Explore the objects that were created
+
+- A new Virtual Server and associated objects
+- A new imported ASM policy for owasptop10
+
+.. Note:: All BIG-IP objects are created in a new partition, rs_App3, so to view you will need to change to this partition in the upper right hand corner of BIG-IP GUI.
+
+
+|labmodule|\.\ |labnum|\.1.3.4 Access the App:
+****************************************************
+
+- Open a tab in Chrome and browse to http://10.1.10.6
+
+  |hackazone010|
+
+
+|labmodule|\.\ |labnum|\.1.3.5 Summary - Jobs roles:
+*******************************************************
+
+B1 - push a WAF policy:
++++++++++++++++++++++++
+- Deploys the 'application specific' profiles, for example: DOSL7, waf policy
+- Jenkins runs a shell command that kicks off an ansible playbook with parameters from the application repo. (which waf policy to use, dosl7 parameters)
+- Ansible playbook takes the parameters and uses them to deploy a configuration to the BIG-IP using the F5 supported ansible modules and API's.
+
+B2 - RS-AS3 service:
+++++++++++++++++++++
+- Deploys the 'service definition' uses AS3 Declaration
+- Jenkins runs a shell command that kicks off an ansible playbook with parameters from the application repo.
+- Ansible playbook takes the parameters and uses them to deploy a configuration to the BIG-IP using the F5 supported ansible modules and API's.
+- AS3 turns the service definition into objects on the BIG-IP
+
+B3 - app-test:
+++++++++++++++
+- Send HTTP requests to the application to test it
+- Jenkins runs a shell command that kicks off an ansible playbook with parameters
+- Ansible playbook takes the parameters and uses them to run HTTP requests to our APP.
+
+B4  - rs-attacks:
++++++++++++++++++
+- Test app vulnerabilities
+- Jenkins runs a shell command that kicks off an ansible playbook with parameters
+- Ansible playbook takes the parameters and uses them to run HTTP requests to our APP.
+
+
+Task |labmodule|\.\ |labnum|\.1.4 - Go over the test results
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+|labmodule|\.\ |labnum|\.1.4.1 View the test results:
+*********************************************************
+
+* The deployment process failed because not all of the application tests completed successfully.
+  Click on the console output of ``app-test`` to review the job
+
+  |jenkins053|
+
+
+|labmodule|\.\ |labnum|\.1.4.2 Identify the WAF blocked page response:
+**************************************************************************
+
+Scroll to the bottom of the console page, you should see a response with :guilabel:`Request Rejected`, and the failure reason as :guilabel:`Unexpected response returned`
+
+- This is an indication that ASM has blocked the request; in our case it is a false positive.
+
+
+  |jenkins056|
+
+.. Note:: In this lab, SecOps uses the same WAF policy template for many apps.
+   We don't want to create a 'snowflake' WAF policy, so with this failure Dave will escalate to SecOps.
+   That ensures that the setting will be reviewed and if needed the policy template will get updated.
+
+
+.. |jenkins010| image:: images/jenkins010.png
+
+.. |jenkins020| image:: images/jenkins020.png
+
+.. |jenkins030| image:: images/jenkins030.png
+
+.. |jenkins040| image:: images/jenkins040.png
+
+.. |jenkins050| image:: images/jenkins050.png
+
+.. |jenkins055| image:: images/jenkins055.png
+
+.. |jenkins053| image:: images/jenkins053.png
+
+.. |jenkins056| image:: images/jenkins056.png
+
+.. |slack040| image:: images/slack-040.png
+
+.. |hackazone010| image:: images/hackazone010.png

@@ -6,7 +6,8 @@ Initial Setup
 
 - From an RDP client open an RDP session to the Window Jumphost
 - Open Putty from the Jumphost and connect to the ``f5-use-cases container``
-- Password for root is ``default``
+  - Username is ``root``
+  - Password is ``default``
 
 
 2. Edit the global parameters file with your personal information
@@ -28,8 +29,8 @@ Initial Setup
 
   .. code-block:: bash
 
-   vault_dac_user: "rosenboim"
-    vault_dac_email: "rosenboim@f5.com"
+   vault_dac_user: "student"
+    vault_dac_email: "student@f5.com"
     vault_dac_password: "admin"
 
 - Press the ``ESC`` key and save the file by typing: ``:wq``

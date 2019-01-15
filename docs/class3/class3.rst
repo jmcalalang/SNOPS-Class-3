@@ -1,5 +1,5 @@
-Class 3: Introduction to SecDevOps
-==================================
+Portland User Group - Super-NetOps Class 3
+==========================================
 
 .. _GitHub: https://github.com/f5devcentral/f5-automation-labs
 .. _Issue: https://github.com/f5devcentral/f5-automation-labs/issues
@@ -12,12 +12,12 @@ This class covers the following topics:
 
 - SecDevOps concepts
 
+- Building Security into CI/CD Pipelines with Jenkins
+
 - Programmatic configuration of security services on BIG-IP
 
-  - Layer 3/4 Firewall (AFM)
   - Layer 7 Web Application Firewall (ASM)
-
-- Building Security into CI/CD Pipelines with Jenkins
+  - Layer 3/4 Firewall (AFM)
 
 - Real world use cases for SecDevOps (time permitting)
 
@@ -31,7 +31,7 @@ To perform the steps required in the lab, `Postman`_ will be used from the jump 
 
 **Lab Guide**
 
-Prior to beginning the exercises, it is recommended to review the `Lab Guide`_.
+Prior to beginning the exercises, it is recommended you familiarize yourself with the  `Lab Guide`_.
 
 **Support**
 
